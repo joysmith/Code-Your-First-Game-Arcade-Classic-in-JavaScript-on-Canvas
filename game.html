@@ -9,13 +9,14 @@
     var ballSpeedX = 10;
     var ballSpeedY = 4;
 
+    // 9. player 1 score
+    var player1Score = 0;
+    // 10. player 2 score
+    var player2Score = 0;
+
     var paddle1Y = 250;
-
-    // 8. leftside paddle variable y-axis
     var paddle2Y = 250;
-    // 9. paddle thickness variable
     const PADDLE_THICKNESS = 10;
-
     const PADDLE_HEIGHT = 100;
 
     function calculateMousePos(evt) {
@@ -45,39 +46,55 @@
       });
     };
 
-    // 1. function that can reset the ball
     function ballReset() {
-      //2 change ball direction
       ballSpeedX = -ballSpeedX;
-      // 3. horizontal center
       ballX = canvas.width / 2;
-      // 4. vertical center
       ballY = canvas.height / 2;
     }
 
+    // 2. get right paddle chasing the ball vertical position
+    function computerMovement() {
+      // 7. comparing center of the paddle
+      var paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
+
+      // 3. in case of paddle above the ball --OLD__CODE
+      // if (paddle2Y < ballY - 35) {
+
+      // 8. comparing with center of the paddle
+      if (paddle2YCenter < ballY - 35) {
+        // 4. move paddle down a little
+        paddle2Y = paddle2Y + 6;
+
+        // 5. in case of paddle below the ball
+      } else if (paddle2YCenter > ballY + 35) {
+        // 6. move paddle up a little
+        paddle2Y = paddle2Y - 6;
+      }
+    }
+
     function moveEverything() {
+      // 1. invoking computer movement function
+      computerMovement();
+
       ballX = ballX + ballSpeedX;
       ballY = ballY + ballSpeedY;
 
       if (ballX < 0) {
-        // 5. bounce the ball if it gets blocked by left paddle
         if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
-          // 6. bounce ball from the paddle
           ballSpeedX = -ballSpeedX;
         } else {
-          // 7. reset ball if it do not hit the paddle
           ballReset();
+          // 11. player 2 gets a point
+          player2Score++;
         }
       }
-
       if (ballX > canvas.width) {
-        // 12. bounce the ball if it gets blocked by right paddle
         if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
-          // 13. bounce ball from the paddle
           ballSpeedX = -ballSpeedX;
         } else {
-          // 14. reset ball if it do not hit the paddle
           ballReset();
+          // 12. player 1 gets the point
+          player1Score++;
         }
       }
       if (ballY < 0) {
@@ -89,13 +106,10 @@
     }
 
     function drawEverything() {
-      // next line blanks out the screen with black
       colorRect(0, 0, canvas.width, canvas.height, "black");
 
-      //11. changer hard coded value with "PADDLE_THICKNESS"
       colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
 
-      // 10.draw second paddle for right side
       colorRect(
         canvas.width - PADDLE_THICKNESS,
         paddle2Y,
@@ -104,8 +118,13 @@
         "white"
       );
 
-      // next line draws the ball
       colorCircle(ballX, ballY, 10, "white");
+
+      // 13. display player 1 score
+      canvasContext.fillText(player1Score, 100, 100);
+
+      // 14. display player 2 score
+      canvasContext.fillText(player2Score, canvas.width - 100, 100);
     }
 
     function colorCircle(centerX, centerY, radius, drawColor) {
