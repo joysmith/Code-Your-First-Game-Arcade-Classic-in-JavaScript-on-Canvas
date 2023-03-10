@@ -1,11 +1,39 @@
 <html>
-  Chris DeLeon was here!
-  <b>This text is thick</b>
-  and
-  <i>this text is slanted</i>
-  and this text is normal. New text added here.
+  some text here
+  <!-- 2. Create an HTML canvas to display graphic on  -->
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
 
   <script>
-    console.log("Hello world!");
+    // 3. creating canvas variable
+    var canvas;
+    // 5. creating canvasContext variable
+    var canvasContext;
+
+    // 1. How to wait for the page to finish loading
+    window.onload = function () {
+      console.log("Hello world!");
+
+      // 4. Grab the HTML canvas for use within JS
+      canvas = document.getElementById("gameCanvas");
+
+      // 6. canvasContext for drawing 2d graphic
+      canvasContext = canvas.getContext("2d");
+
+      // 7. fill black color
+      canvasContext.fillStyle = "black";
+
+      // 8. draw a rectangel
+      // fill rect takes 4 args
+      // x coordinate, y coordinate, widthin pixel , height in pixel
+      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 9. draw white rectangle
+      canvasContext.fillStyle = "white";
+      canvasContext.fillRect(225, 210, 200, 200);
+
+      // 10. draw red rectangle
+      canvasContext.fillStyle = "red";
+      canvasContext.fillRect(canvas.width / 2, 200, 50, 25);
+    };
   </script>
 </html>
