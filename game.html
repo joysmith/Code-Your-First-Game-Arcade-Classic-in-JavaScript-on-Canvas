@@ -11,11 +11,8 @@
 
     var player1Score = 0;
     var player2Score = 0;
-
-    // 5. winning condition
     const WINNING_SCORE = 3;
 
-    // 11 winning screen
     var showingWinScreen = false;
 
     var paddle1Y = 250;
@@ -34,6 +31,18 @@
       };
     }
 
+    // 2. defining handle mouse click
+    function handleMouseClick(evt) {
+      if (showingWinScreen) {
+        // 3. reset score
+        player1Score = 0;
+        // 4. reset score
+        player2Score = 0;
+        // 5. turn showWinScreen switch off
+        showingWinScreen = false;
+      }
+    }
+
     window.onload = function () {
       canvas = document.getElementById("gameCanvas");
       canvasContext = canvas.getContext("2d");
@@ -44,20 +53,17 @@
         drawEverything();
       }, 1000 / framesPerSecond);
 
+      // 1. restart upon mouse click when viewing end screen
+      canvas.addEventListener("mousedown", handleMouseClick);
+
       canvas.addEventListener("mousemove", function (evt) {
         var mousePos = calculateMousePos(evt);
         paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
       });
     };
-    function ballReset() {
-      // 8. creating winning conditions
-      if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-        // 9. reset player 1 score
-        player1Score = 0;
-        // 10. reset player 2 score
-        player2Score = 0;
 
-        // 12. flip switch of showing win screen
+    function ballReset() {
+      if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
         showingWinScreen = true;
       }
 
@@ -76,7 +82,6 @@
     }
 
     function moveEverything() {
-      // 13. stop game when either side wins
       if (showingWinScreen) {
         return;
       }
@@ -90,28 +95,21 @@
         if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
           ballSpeedX = -ballSpeedX;
 
-          // 1. give ball control based on where it hits the paddle
           var deltaY = ballY - (paddle1Y + PADDLE_HEIGHT / 2);
-          // 2. changing ball speed
           ballSpeedY = deltaY * 0.35;
         } else {
-          // 6.refactor:  must be BEFORE ballReset()
-          player2Score++;
+          player2Score++; // must be BEFORE ballReset()
           ballReset();
         }
       }
-
       if (ballX > canvas.width) {
         if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
           ballSpeedX = -ballSpeedX;
 
-          // 3. give ball control based on where it hits the paddle
           var deltaY = ballY - (paddle2Y + PADDLE_HEIGHT / 2);
-          // 4. changing ball speed
           ballSpeedY = deltaY * 0.35;
         } else {
-          // 7. refactor: must be BEFORE ballReset()
-          player1Score++;
+          player1Score++; // must be BEFORE ballReset()
           ballReset();
         }
       }
@@ -123,19 +121,41 @@
       }
     }
 
+    // 9. draw dashed line new down the playfield center
+    function drawNet() {
+      for (var i = 0; i < canvas.height; i += 40) {
+        // dract rectangle
+        colorRect(canvas.width / 2 - 1, i, 2, 20, "white");
+      }
+    }
+
     function drawEverything() {
       // next line blanks out the screen with black
       colorRect(0, 0, canvas.width, canvas.height, "black");
 
-      // 14. stop game when either side wins
       if (showingWinScreen) {
         canvasContext.fillStyle = "white";
-        canvasContext.fillText("click to continue", 100, 100);
+
+        // 6. declaring on the end screen which paddle side won
+        if (player1Score >= WINNING_SCORE) {
+          // 7. player left won
+          canvasContext.fillText("Left Player Won", 350, 200);
+        } else if (player2Score >= WINNING_SCORE) {
+          // 8. player right won
+          canvasContext.fillText("Right Player Won", 350, 200);
+        }
+
+        canvasContext.fillText("click to continue", 350, 500);
         return;
       }
 
+      // 10. invoking drawNew
+      drawNet();
+
+      // this is left player paddle
       colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
 
+      // this is right computer paddle
       colorRect(
         canvas.width - PADDLE_THICKNESS,
         paddle2Y,
@@ -144,6 +164,7 @@
         "white"
       );
 
+      // next line draws the ball
       colorCircle(ballX, ballY, 10, "white");
 
       canvasContext.fillText(player1Score, 100, 100);
