@@ -1,33 +1,28 @@
 <html>
   <canvas id="gameCanvas" width="800" height="600"></canvas>
+
   <script>
     var canvas;
     var canvasContext;
     var ballX = 50;
-    var ballSpeedX = 10;
-
-    // 1. creating ballY axis variable
     var ballY = 50;
-    // 2. creting ballY velocity variable
+    var ballSpeedX = 10;
     var ballSpeedY = 4;
 
-    // 9. paddleY position
     var paddle1Y = 250;
-    // 10. paddle height const
+
+    // 8. leftside paddle variable y-axis
+    var paddle2Y = 250;
+    // 9. paddle thickness variable
+    const PADDLE_THICKNESS = 10;
+
     const PADDLE_HEIGHT = 100;
 
-    // 12. find the mouse position relative to game canvas
     function calculateMousePos(evt) {
-      // 13.
       var rect = canvas.getBoundingClientRect();
-      // 14.
       var root = document.documentElement;
-      // 15.
       var mouseX = evt.clientX - rect.left - root.scrollLeft;
-      // 16.
       var mouseY = evt.clientY - rect.top - root.scrollTop;
-
-      // 17. output x,y coordinate
       return {
         x: mouseX,
         y: mouseY,
@@ -44,50 +39,72 @@
         drawEverything();
       }, 1000 / framesPerSecond);
 
-      // 18. set paddle's position value wherever mouse move using "mousemove" event
       canvas.addEventListener("mousemove", function (evt) {
         var mousePos = calculateMousePos(evt);
-        // 19. align paddle's center on the mouse'y position
         paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
       });
     };
 
+    // 1. function that can reset the ball
+    function ballReset() {
+      //2 change ball direction
+      ballSpeedX = -ballSpeedX;
+      // 3. horizontal center
+      ballX = canvas.width / 2;
+      // 4. vertical center
+      ballY = canvas.height / 2;
+    }
+
     function moveEverything() {
       ballX = ballX + ballSpeedX;
-
-      // 3. make ball move in Y-axis
       ballY = ballY + ballSpeedY;
 
       if (ballX < 0) {
-        ballSpeedX = -ballSpeedX;
-      }
-      if (ballX > canvas.width) {
-        ballSpeedX = -ballSpeedX;
+        // 5. bounce the ball if it gets blocked by left paddle
+        if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
+          // 6. bounce ball from the paddle
+          ballSpeedX = -ballSpeedX;
+        } else {
+          // 7. reset ball if it do not hit the paddle
+          ballReset();
+        }
       }
 
-      // 4. bounce ball vertically top
+      if (ballX > canvas.width) {
+        // 12. bounce the ball if it gets blocked by right paddle
+        if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
+          // 13. bounce ball from the paddle
+          ballSpeedX = -ballSpeedX;
+        } else {
+          // 14. reset ball if it do not hit the paddle
+          ballReset();
+        }
+      }
       if (ballY < 0) {
-        // 5. flip vertical speed
         ballSpeedY = -ballSpeedY;
       }
-
-      //   6. bounce ball vertically bottom
       if (ballY > canvas.height) {
-        // 7. flip vertiacal speed
         ballSpeedY = -ballSpeedY;
       }
     }
 
     function drawEverything() {
+      // next line blanks out the screen with black
       colorRect(0, 0, canvas.width, canvas.height, "black");
 
-      // 11. paddle position "paddle1Y" and size --OLD_CODE
-      // colorRect(0, paddle1Y, 10, 100, "white");
+      //11. changer hard coded value with "PADDLE_THICKNESS"
+      colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
 
-      // 20. replace hardcoded with "PADDLE_HEIGHT"
-      colorRect(0, paddle1Y, 10, PADDLE_HEIGHT, "white");
+      // 10.draw second paddle for right side
+      colorRect(
+        canvas.width - PADDLE_THICKNESS,
+        paddle2Y,
+        PADDLE_THICKNESS,
+        PADDLE_HEIGHT,
+        "white"
+      );
 
-      // 8. replacing hard coded value with "ballY"
+      // next line draws the ball
       colorCircle(ballX, ballY, 10, "white");
     }
 
