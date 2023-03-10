@@ -9,10 +9,14 @@
     var ballSpeedX = 10;
     var ballSpeedY = 4;
 
-    // 9. player 1 score
     var player1Score = 0;
-    // 10. player 2 score
     var player2Score = 0;
+
+    // 5. winning condition
+    const WINNING_SCORE = 3;
+
+    // 11 winning screen
+    var showingWinScreen = false;
 
     var paddle1Y = 250;
     var paddle2Y = 250;
@@ -45,35 +49,38 @@
         paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
       });
     };
-
     function ballReset() {
+      // 8. creating winning conditions
+      if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
+        // 9. reset player 1 score
+        player1Score = 0;
+        // 10. reset player 2 score
+        player2Score = 0;
+
+        // 12. flip switch of showing win screen
+        showingWinScreen = true;
+      }
+
       ballSpeedX = -ballSpeedX;
       ballX = canvas.width / 2;
       ballY = canvas.height / 2;
     }
 
-    // 2. get right paddle chasing the ball vertical position
     function computerMovement() {
-      // 7. comparing center of the paddle
       var paddle2YCenter = paddle2Y + PADDLE_HEIGHT / 2;
-
-      // 3. in case of paddle above the ball --OLD__CODE
-      // if (paddle2Y < ballY - 35) {
-
-      // 8. comparing with center of the paddle
       if (paddle2YCenter < ballY - 35) {
-        // 4. move paddle down a little
         paddle2Y = paddle2Y + 6;
-
-        // 5. in case of paddle below the ball
       } else if (paddle2YCenter > ballY + 35) {
-        // 6. move paddle up a little
         paddle2Y = paddle2Y - 6;
       }
     }
 
     function moveEverything() {
-      // 1. invoking computer movement function
+      // 13. stop game when either side wins
+      if (showingWinScreen) {
+        return;
+      }
+
       computerMovement();
 
       ballX = ballX + ballSpeedX;
@@ -82,19 +89,30 @@
       if (ballX < 0) {
         if (ballY > paddle1Y && ballY < paddle1Y + PADDLE_HEIGHT) {
           ballSpeedX = -ballSpeedX;
+
+          // 1. give ball control based on where it hits the paddle
+          var deltaY = ballY - (paddle1Y + PADDLE_HEIGHT / 2);
+          // 2. changing ball speed
+          ballSpeedY = deltaY * 0.35;
         } else {
-          ballReset();
-          // 11. player 2 gets a point
+          // 6.refactor:  must be BEFORE ballReset()
           player2Score++;
+          ballReset();
         }
       }
+
       if (ballX > canvas.width) {
         if (ballY > paddle2Y && ballY < paddle2Y + PADDLE_HEIGHT) {
           ballSpeedX = -ballSpeedX;
+
+          // 3. give ball control based on where it hits the paddle
+          var deltaY = ballY - (paddle2Y + PADDLE_HEIGHT / 2);
+          // 4. changing ball speed
+          ballSpeedY = deltaY * 0.35;
         } else {
-          ballReset();
-          // 12. player 1 gets the point
+          // 7. refactor: must be BEFORE ballReset()
           player1Score++;
+          ballReset();
         }
       }
       if (ballY < 0) {
@@ -106,7 +124,15 @@
     }
 
     function drawEverything() {
+      // next line blanks out the screen with black
       colorRect(0, 0, canvas.width, canvas.height, "black");
+
+      // 14. stop game when either side wins
+      if (showingWinScreen) {
+        canvasContext.fillStyle = "white";
+        canvasContext.fillText("click to continue", 100, 100);
+        return;
+      }
 
       colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
 
@@ -120,10 +146,7 @@
 
       colorCircle(ballX, ballY, 10, "white");
 
-      // 13. display player 1 score
       canvasContext.fillText(player1Score, 100, 100);
-
-      // 14. display player 2 score
       canvasContext.fillText(player2Score, canvas.width - 100, 100);
     }
 
