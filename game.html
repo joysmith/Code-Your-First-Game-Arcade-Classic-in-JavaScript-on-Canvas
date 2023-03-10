@@ -5,35 +5,34 @@
   <script>
     var canvas;
     var canvasContext;
-
-    // 4. creating ballX variable to vary shape draw position
     var ballX = 50;
 
     window.onload = function () {
       canvas = document.getElementById("gameCanvas");
       canvasContext = canvas.getContext("2d");
 
-      // 3. call draweverything function after refactor --OLD_CODE
-      // drawEverything;
-
-      // 7. show motion over time (basic dynamic animation) by setting timer
-      setInterval(drawEverything, 50);
+      // 1. set update frequency as fps
+      var framesPerSecond = 30;
+      setInterval(function () {
+        moveEverything(); // 5. invoking moveEverything()
+        drawEverything();
+      }, 1000 / framesPerSecond); // 2. calculate fram rate
     };
 
-    // 1. creating a function to group all draw code
-    function drawEverything() {
-      // 6. make ball move in x-axis
+    // 4. refactor the move code from the draw code
+    function moveEverything() {
       ballX = ballX + 5;
-      console.log(ballX);
+    }
 
-      // 2. refactor code
+    function drawEverything() {
       canvasContext.fillStyle = "black";
       canvasContext.fillRect(0, 0, canvas.width, canvas.height);
       canvasContext.fillStyle = "white";
-      canvasContext.fillRect(225, 210, 200, 200);
-      canvasContext.fillStyle = "red";
 
-      // 5. draw ballX at position 50
+      // 3. move and resize the box (it'll become a paddle)
+      canvasContext.fillRect(0, 210, 10, 100);
+
+      canvasContext.fillStyle = "red";
       canvasContext.fillRect(ballX, 100, 10, 10);
     }
   </script>
