@@ -7,33 +7,52 @@
     var canvasContext;
     var ballX = 50;
 
+    // 1. creating a variable to support speed change
+    var ballSpeedX = 10;
+
     window.onload = function () {
       canvas = document.getElementById("gameCanvas");
       canvasContext = canvas.getContext("2d");
 
-      // 1. set update frequency as fps
       var framesPerSecond = 30;
       setInterval(function () {
-        moveEverything(); // 5. invoking moveEverything()
+        moveEverything();
         drawEverything();
-      }, 1000 / framesPerSecond); // 2. calculate fram rate
+      }, 1000 / framesPerSecond);
     };
 
-    // 4. refactor the move code from the draw code
     function moveEverything() {
-      ballX = ballX + 5;
+      // 2. changing ball velocity
+      ballX = ballX + ballSpeedX;
+
+      // 5. bounce the ball off the left canvas side
+      if (ballX < 0) {
+        // 6. change ball direction by fliping direction of velocity
+        ballSpeedX = -ballSpeedX;
+      }
+
+      // 3. bouncing the ball off the right canvas side
+      if (ballX > canvas.width) {
+        // 4. change ball direction by changing direction of velocity
+        ballSpeedX = -ballSpeedX;
+      }
     }
 
     function drawEverything() {
-      canvasContext.fillStyle = "black";
-      canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-      canvasContext.fillStyle = "white";
+      // 8. next line blanks out the screen with black
+      colorRect(0, 0, canvas.width, canvas.height, "black");
 
-      // 3. move and resize the box (it'll become a paddle)
-      canvasContext.fillRect(0, 210, 10, 100);
+      // 9. this is left player paddle
+      colorRect(0, 210, 10, 100, "white");
 
-      canvasContext.fillStyle = "red";
-      canvasContext.fillRect(ballX, 100, 10, 10);
+      // 10. next line draws the ball
+      colorRect(ballX, 100, 10, 10, "red");
+    }
+
+    // 7. Refactor: creating function for drawing the filled shapes --compress two line in single
+    function colorRect(leftX, topY, width, height, drawColor) {
+      canvasContext.fillStyle = drawColor; //color
+      canvasContext.fillRect(leftX, topY, width, height); //draw shape
     }
   </script>
 </html>
