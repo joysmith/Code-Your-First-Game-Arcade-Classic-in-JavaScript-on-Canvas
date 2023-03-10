@@ -1,39 +1,40 @@
 <html>
   some text here
-  <!-- 2. Create an HTML canvas to display graphic on  -->
   <canvas id="gameCanvas" width="800" height="600"></canvas>
 
   <script>
-    // 3. creating canvas variable
     var canvas;
-    // 5. creating canvasContext variable
     var canvasContext;
 
-    // 1. How to wait for the page to finish loading
+    // 4. creating ballX variable to vary shape draw position
+    var ballX = 50;
+
     window.onload = function () {
-      console.log("Hello world!");
-
-      // 4. Grab the HTML canvas for use within JS
       canvas = document.getElementById("gameCanvas");
-
-      // 6. canvasContext for drawing 2d graphic
       canvasContext = canvas.getContext("2d");
 
-      // 7. fill black color
+      // 3. call draweverything function after refactor --OLD_CODE
+      // drawEverything;
+
+      // 7. show motion over time (basic dynamic animation) by setting timer
+      setInterval(drawEverything, 50);
+    };
+
+    // 1. creating a function to group all draw code
+    function drawEverything() {
+      // 6. make ball move in x-axis
+      ballX = ballX + 5;
+      console.log(ballX);
+
+      // 2. refactor code
       canvasContext.fillStyle = "black";
-
-      // 8. draw a rectangel
-      // fill rect takes 4 args
-      // x coordinate, y coordinate, widthin pixel , height in pixel
       canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
-      // 9. draw white rectangle
       canvasContext.fillStyle = "white";
       canvasContext.fillRect(225, 210, 200, 200);
-
-      // 10. draw red rectangle
       canvasContext.fillStyle = "red";
-      canvasContext.fillRect(canvas.width / 2, 200, 50, 25);
-    };
+
+      // 5. draw ballX at position 50
+      canvasContext.fillRect(ballX, 100, 10, 10);
+    }
   </script>
 </html>
